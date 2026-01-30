@@ -17,8 +17,9 @@ Key Features:
 
 Input Requirements:
     - JSON file with captions in format: [{"path": "00/1085700.mp3", "caption": "..."}, ...]
-    - Original Jamendo audio files organized in {sub_folder}/{id}.mp3
+    - Original Jamendo audio files organized in {sub_folder}/{id}_instrumental.mp3
     - Audio files should be in standard formats (mp3, wav, flac, etc.)
+    - Script uses the instrumental stem from separated audio
 
 Output Structure:
     output_dir/
@@ -146,9 +147,11 @@ def process_split(
                 skipped_count += 1
                 continue
 
-            # Get audio file path
+            # Get audio file path (use instrumental stem)
             sub_folder_idx = sample_id[-2:]
-            audio_file = Path(audio_root) / sub_folder_idx / f"{sample_id}.mp3"
+            audio_file = (
+                Path(audio_root) / sub_folder_idx / f"{sample_id}_instrumental.mp3"
+            )
 
             # Check if audio file exists
             if not audio_file.exists():
@@ -207,25 +210,42 @@ def prepare_jamendo_dataset(
     # Load captions from JSON
     caption_dict = load_captions_from_json(caption_path)
 
-    # Get all sample IDs
-    all_sample_ids = list(caption_dict.keys())
-    total_samples = len(all_sample_ids)
-    print(f"Total samples: {total_samples}")
+    # Filter sample IDs to only include those with existing audio files
+    print(f"\nChecking audio file existence...")
+    audio_root_path = Path(audio_root)
+    valid_sample_ids = []
+    missing_count = 0
+
+    for sample_id in tqdm(caption_dict.keys(), desc="Validating audio files"):
+        sub_folder_idx = sample_id[-2:]
+        audio_file = audio_root_path / sub_folder_idx / f"{sample_id}_instrumental.mp3"
+        if audio_file.exists():
+            valid_sample_ids.append(sample_id)
+        else:
+            missing_count += 1
+
+    print(f"Total samples in caption file: {len(caption_dict)}")
+    print(f"Samples with existing audio files: {len(valid_sample_ids)}")
+    print(f"Samples with missing audio files: {missing_count}")
+
+    if len(valid_sample_ids) == 0:
+        print("Error: No valid audio files found!")
+        return
 
     # Set random seed for reproducibility
     random.seed(seed)
-    random.shuffle(all_sample_ids)
+    random.shuffle(valid_sample_ids)
 
     # Split sample IDs
-    test_sample_ids = all_sample_ids[:test_samples]
-    val_sample_ids = all_sample_ids[test_samples : test_samples + val_samples]
-    train_sample_ids = all_sample_ids[test_samples + val_samples :]
+    test_sample_ids = valid_sample_ids[:test_samples]
+    val_sample_ids = valid_sample_ids[test_samples : test_samples + val_samples]
+    train_sample_ids = valid_sample_ids[test_samples + val_samples :]
 
     print(f"\nSplit sizes:")
     print(f"  Train: {len(train_sample_ids)} samples")
     print(f"  Val:   {len(val_sample_ids)} samples")
     print(f"  Test:  {len(test_sample_ids)} samples")
-    print(f"  All:   {len(all_sample_ids)} samples")
+    print(f"  All:   {len(valid_sample_ids)} samples")
 
     # Process each split
     output_base = Path(output_dir)
@@ -233,7 +253,7 @@ def prepare_jamendo_dataset(
         "train": train_sample_ids,
         "val": val_sample_ids,
         "test": test_sample_ids,
-        "all": all_sample_ids,
+        "all": valid_sample_ids,
     }
 
     total_success = 0
@@ -272,16 +292,16 @@ def main():
         description="Prepare Jamendo dataset for MeanAudio processing with train/val/test splits"
     )
     parser.add_argument(
-        "--caption_path",
-        type=str,
-        required=True,
-        help='Path to JSON file containing captions (format: [{"path": "00/1085700.mp3", "caption": "..."}, ...])',
-    )
-    parser.add_argument(
         "--audio_root",
         type=str,
         required=True,
         help="Root path to Jamendo audio files",
+    )
+    parser.add_argument(
+        "--caption_path",
+        type=str,
+        default="./data/caption/jamendo_qwen.json",
+        help='Path to JSON file containing captions (format: [{"path": "00/1085700.mp3", "caption": "..."}, ...])',
     )
     parser.add_argument(
         "--output_dir",
