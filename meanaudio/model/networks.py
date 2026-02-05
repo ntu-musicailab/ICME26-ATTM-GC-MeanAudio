@@ -587,6 +587,16 @@ def fluxaudio_s(**kwargs) -> FluxAudio:
                      num_heads=num_heads,
                      latent_seq_len=312,  # for 10s audio
                      **kwargs)
+def fluxaudio_l(**kwargs) -> FluxAudio: 
+    num_heads = 14
+    return FluxAudio(latent_dim=20,
+                     text_dim=1024,
+                     hidden_dim=64 * num_heads,
+                     depth=12,
+                     fused_depth=8,
+                     num_heads=num_heads,
+                     latent_seq_len=312,  # for 10s audio
+                     **kwargs)
 def meanaudio_s(**kwargs) -> MeanAudio: 
     num_heads = 7
     return MeanAudio(latent_dim=20,
@@ -616,6 +626,8 @@ def get_mean_audio(name: str, **kwargs) -> MeanAudio:
         return meanaudio_l(**kwargs)
     if name == 'fluxaudio_s': 
         return fluxaudio_s(**kwargs)
+    if name == 'fluxaudio_l': 
+        return fluxaudio_l(**kwargs)
 
     raise ValueError(f'Unknown model name: {name}')
 
