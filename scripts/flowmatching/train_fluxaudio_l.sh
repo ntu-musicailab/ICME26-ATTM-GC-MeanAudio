@@ -1,21 +1,21 @@
-export CUDA_VISIBLE_DEVICES=4,5,6,7
+export CUDA_VISIBLE_DEVICES=0
 
 NUM_GPUS=$(echo ${CUDA_VISIBLE_DEVICES:-""} | tr ',' '\n' | wc -l)
-btz=256
-num_iterations=200_000
-exp_id=AC_${btz}_numgpus${NUM_GPUS}_niter${num_iterations}_T5_CLAP_flowmatching
+btz=64
+num_iterations=1_000_000
+exp_id=AC_${btz}_numgpus${NUM_GPUS}_niter${num_iterations}_T5_CLAP_fluxaudio_l
 
 text_encoder_name=t5_clap
 
-text_c_dim=512   # 1024 + 512
-model=fluxaudio_s # meanaudio_s, fluxaudio_s
+text_c_dim=512
+model=fluxaudio_l
 
 
 OMP_NUM_THREADS=1 \
 CUDA_VISIBLE_DEVICES=$CUDA_VISIBLE_DEVICES \
 torchrun --standalone --nproc_per_node=$NUM_GPUS \
     train.py \
-    --config-name train_config.yaml \
+    --config-name train_config_jamendo.yaml \
     exp_id=$exp_id \
     compile=False \
     model=$model \

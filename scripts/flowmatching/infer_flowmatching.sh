@@ -1,9 +1,9 @@
 export CUDA_VISIBLE_DEVICES=1
 
-output_path=./exps/fluxaudio_s_full/output_25nfe
+output_path=./exps/AC_128_numgpus1_niter200_000_T5_CLAP_fluxaudio_s/outputs
 
-prompt="A basketball bounces rhythmically on a court, shoes squeak against the floor, and a referee’s whistle cuts through the air"
-ckpt_path=weights/fluxaudio_s_full.pth
+prompt="A beautiful and moving classical piano piece showcasing intricate melodies and harmonies, with elements of dissonance and tension creating a sense of release."
+ckpt_path=./AC_128_numgpus1_niter200_000_T5_CLAP_fluxaudio_s/AC_128_numgpus1_niter200_000_T5_CLAP_fluxaudio_s_ema_final.pth
 
 python infer.py \
     --variant "fluxaudio_s" \
