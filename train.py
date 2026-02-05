@@ -99,7 +99,8 @@ def train(cfg: DictConfig):
 
     val_dataset, val_loader, eval_loader = setup_val_datasets(cfg)  # same dataset (val_dataset) but with different dataloader
     info_if_rank_zero(log, f'Number of val samples: {len(val_dataset)}')
-    val_cfg = cfg.data.AudioCaps_val_npz  # tsv and memmap dir 
+    # val_cfg = cfg.data.AudioCaps_val_npz  # tsv and memmap dir 
+    val_cfg = cfg.data.Jamendo_val_npz  # tsv and memmap dir 
 
     # compute and set mean and std
     latent_mean, latent_std = torch.load(cfg.data.latent_mean), torch.load(cfg.data.latent_std)

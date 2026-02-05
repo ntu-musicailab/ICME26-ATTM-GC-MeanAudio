@@ -69,7 +69,8 @@ def sample(cfg: DictConfig):
 
     # setup datasets
     dataset, sampler, loader = setup_test_datasets(cfg)
-    data_cfg = cfg.data.AudioCaps_test_npz  # base_at data config
+    # data_cfg = cfg.data.AudioCaps_test_npz  # base_at data config
+    data_cfg = cfg.data.Jamendo_test_npz  # base_at data config
     with open_dict(data_cfg):
         if cfg.output_name is not None:
             # append to the tag

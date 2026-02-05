@@ -43,7 +43,8 @@ def setup_training_datasets(cfg: DictConfig) -> tuple[Dataset, DistributedSample
             
     else: 
 
-        audiocaps_npz = load_audio_data(cfg, cfg.data.AudioCaps_npz) 
+        jamendo_npz = load_audio_data(cfg, cfg.data.Jamendo_train_npz)
+        # audiocaps_npz = load_audio_data(cfg, cfg.data.AudioCaps_npz) 
         # !TODO: think of a better way to handle different datasets
         
         # freesound1_npz = load_audio_data_npz(cfg, cfg.data.FreeSound1_npz)
@@ -54,7 +55,8 @@ def setup_training_datasets(cfg: DictConfig) -> tuple[Dataset, DistributedSample
         # bbcsound_npz = load_audio_data_npz(cfg, cfg.data.BBCSound_npz)
         # clotho_npz = load_audio_data_npz(cfg, cfg.data.Clotho_npz)
 
-        dataset = MultiModalDataset([], [audiocaps_npz]) 
+        dataset = MultiModalDataset([], [jamendo_npz]) 
+        # dataset = MultiModalDataset([], [audiocaps_npz]) 
         # dataset = MultiModalDataset([], [audiocaps_npz]*cfg.ac_oversample_rate + [audioset_sl_npz, bbcsound_npz, clotho_npz,  
         #                                                                         freesound1_npz, freesound2_npz, freesound3_npz])
         
@@ -73,7 +75,8 @@ def setup_training_datasets(cfg: DictConfig) -> tuple[Dataset, DistributedSample
 
 
 def setup_test_datasets(cfg):  # used in sample
-    dataset = load_audio_data(cfg, cfg.data.AudioCaps_test_npz)  # ALL with NPZ format
+    dataset = load_audio_data(cfg, cfg.data.Jamendo_test_npz)  # ALL with NPZ format
+    # dataset = load_audio_data(cfg, cfg.data.AudioCaps_test_npz)  # ALL with NPZ format
 
     batch_size = cfg.eval_batch_size  # FIX: from train config
     num_workers = cfg.num_workers
@@ -89,7 +92,8 @@ def setup_test_datasets(cfg):  # used in sample
 
 
 def setup_val_datasets(cfg: DictConfig) -> tuple[Dataset, DataLoader, DataLoader]:
-    dataset = load_audio_data(cfg, cfg.data.AudioCaps_val_npz)
+    dataset = load_audio_data(cfg, cfg.data.Jamendo_val_npz)
+    # dataset = load_audio_data(cfg, cfg.data.AudioCaps_val_npz)
 
     val_batch_size = cfg.batch_size
     val_eval_batch_size = cfg.eval_batch_size
