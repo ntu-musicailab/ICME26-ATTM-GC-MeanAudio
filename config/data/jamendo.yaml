@@ -1,0 +1,26 @@
+# Jamendo Dataset Configuration
+Jamendo_train_npz: 
+  tag: train
+  tsv: data/jamendo_meanaudio_ready/train/npz.tsv
+  npz_dir: data/jamendo_meanaudio_ready/train/npz
+  output_subdir: null
+  repa_npz_dir: null
+
+Jamendo_val_npz: 
+  tag: val
+  tsv: data/jamendo_meanaudio_ready/val/npz.tsv
+  npz_dir: data/jamendo_meanaudio_ready/val/npz
+  output_subdir: null
+  repa_npz_dir: null
+  gt_cache: exps/AC_128_numgpus1_niter200_000_T5_CLAP_fluxaudio_small/val-sampled/cache  # Optional: for storing ground truth features
+
+Jamendo_test_npz: 
+  tag: test
+  tsv: data/jamendo_meanaudio_ready/test/npz.tsv
+  npz_dir: data/jamendo_meanaudio_ready/test/npz
+  output_subdir: null
+  repa_npz_dir: null
+  gt_cache: exps/AC_128_numgpus1_niter200_000_T5_CLAP_fluxaudio_small/test-sampled/cache  # Optional: for storing ground truth features
+
+latent_mean: 'sets/latent_mean.pt'
+latent_std: 'sets/latent_std.pt'
