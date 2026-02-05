@@ -1,29 +1,6 @@
-<div align="center">
-<p align="center">
-  <h1>MeanAudio: Fast and Faithful Text-to-Audio Generation with Mean Flows</h1>
-  <!-- <a href=>Paper</a> | <a href="https://meanaudio.github.io/">Webpage</a>  -->
+# ICME26 ATTM-GC Baseline Model
 
-  [![Paper](https://img.shields.io/badge/Paper-arXiv-b31b1b?logo=arxiv&logoColor=white)](https://arxiv.org/abs/2508.06098)
-  [![Hugging Face Model](https://img.shields.io/badge/Model-HuggingFace-yellow?logo=huggingface)](https://huggingface.co/AndreasXi/MeanAudio)
-  [![Hugging Face Space](https://img.shields.io/badge/Space-HuggingFace-blueviolet?logo=huggingface)](https://huggingface.co/spaces/chenxie95/MeanAudio)
-  [![Webpage](https://img.shields.io/badge/Website-Visit-orange?logo=googlechrome&logoColor=white)](https://meanaudio.github.io/)
-
-
-</p>
-</div>
-
-## News 🔥
-- [Update Aug. 27, 2025] We present a new variant of MeanAudio: [MeanAudio-L-Full](https://huggingface.co/AndreasXi/MeanAudio/blob/main/meanaudio_l_full.pth) a 480M latent flow transformer achieving SOTA performance on both single-step and multi-step audio generation. Try it out at our [🤗 huggingface space](https://huggingface.co/spaces/chenxie95/MeanAudio) !
-
-- [Update Aug. 17, 2025] We present [MeanAudio-S-Full](https://huggingface.co/AndreasXi/MeanAudio/blob/main/meanaudio_s_full.pth): a 120M latent flow transformer trained with the MeanFlow objective on ~10,000 hours of audio data sourced from AudioCaps, AudioSet, WavCaps, VGGSound, MusicCaps, and LP-MusicCaps. 
-
-## Overview 
-MeanAudio is a novel MeanFlow-based model tailored for fast and faithful text-to-audio generation. It can synthesize realistic sound in a single step, achieving a real-time factor (RTF) of 0.013 on a single NVIDIA 3090 GPU. Moreover, it also demonstrates strong performance in multi-step generation.
-
-<div align="center">
-  <img src="sets/performance.png" alt="" width="500">
-</div>
-
+This repository provides comprehensive instructions for training a FluxAudio model using the Jamendo dataset, serving as a baseline and starting point for participants of the ICME 2026 Academic Text-to-Music Grand Challenge (ATTM-GC). The goal is to help teams get started quickly, while exploration of alternative architectures is also encouraged.
 
 ## Environmental Setup
 
@@ -42,80 +19,84 @@ conda install -c conda-forge 'ffmpeg<7
 **2. Install with pip:**
 
 ```bash
-git clone https://github.com/xiquan-li/MeanAudio.git
+git clone https://github.com/ntu-musicailab/ICME26-ATTM-GC-MeanAudio.git
 
-cd MeanAudio
+cd ICME26-ATTM-GC-MeanAudio
 pip install -e .
 ```
 
 <!-- (If you encounter the File "setup.py" not found error, upgrade your pip with pip install --upgrade pip) -->
 
-
-## Quick Start
-
-<!-- **1. Download pre-trained models:** -->
-To generate audio with our pre-trained model, simply run: 
-```bash 
-python demo.py --prompt 'your prompt' --num_steps 1
-```
-This will automatically download the pre-trained checkpoints from huggingface, and generate audio according to your prompt. 
-By default, this will use [meanaudio-s-full](https://huggingface.co/AndreasXi/MeanAudio/blob/main/meanaudio_s_full.pth). 
-The output audio will be at `MeanAudio/output/`, and the checkpoints will be at `MeanAudio/weights/`. 
-
-Alternatively, you can download manually the pre-trained models from this [Folder](https://drive.google.com/drive/folders/1nbIsVjl4pqLaAnqj-M8UPkahu28S59Kj?usp=sharing), and put them into `MeanAudio/weights/`. Then, you can use `scripts/meanflow/infer_meanflow.sh` and `scripts/flowmatching/infer_flowmatching.sh` to generate audio with pre-trained models. 
-
-## Variants
-
-| Model Name  | Size | Dataset | Objective | Pre-trained | Link | 
-|---|---|---|---|---|---|
-| MeanAudio-S-AC | 120M | AudioCaps | Mean Flow | FluxAudio-S-Full | [Here](https://huggingface.co/AndreasXi/MeanAudio/blob/main/meanaudio_s_ac.pth)| 
-| FluxAudio-S-Full | 120M | All $^*$ | Flow Matching | - | [Here](https://huggingface.co/AndreasXi/MeanAudio/blob/main/fluxaudio_s_full.pth)
-| MeanAudio-S-Full | 120M | All $^*$ | Mean Flow | - | [Here](https://huggingface.co/AndreasXi/MeanAudio/blob/main/meanaudio_s_full.pth) | 
-| MeanAudio-L-Full | 480M | All $^*$ | Mean Flow | - | [Here](https://huggingface.co/AndreasXi/MeanAudio/blob/main/meanaudio_l_full.pth)
-
-
-$^*$: All denotes AudioCaps + WavCaps + AudioSet + VGGSound + LP-MusicCaps-MC + LP-MusicCaps-MTT, forming approximately 3M of audio-text pairs (about 10,000 hours audio data). 
-<!-- 1. [fluxaudio_s_full.pth](https://drive.google.com/file/d/180nrqkO3t9hvlg_l8wN9uv1RoKoFyzrV/view?usp=drive_link): The Flux-style flow transformer trained on AudioCaps, AudioSet, WavCaps, VGGSound, MusicCaps and LP-MusicCaps with the **standard flow matching objective**. It is capable of generating audio with multiple ($\geq 25$) sampling steps. You can run `scripts/flowmatching/infer_flowmatching.sh` to generate sound with this model.
-
-2. [meanaudio_s_ac.pth](https://drive.google.com/file/d/11eQ3i5TJkU8b8S30PkHSgVozoNMWgCis/view?usp=drive_link): The Flux-style flow transformer fine-tuned on AudioCaps with the **Mean Flow Objective**, supporting both single-step and multi-step audio generation. You can run `scripts/meanflow/infer_meanflow.sh` to generate sound with it. 
-
-3. [meanaudio_s_full.pth](https://drive.google.com/file/d/1zGiZrHZ6CuFKpsPe2hVgFD1FsNpBYQU_/view?usp=drive_link): The Flux-style flow transformer trained on AudioCaps, AudioSet, WavCaps, VGGSound, MusicCaps and LP-MusicCaps with the **Mean Flow Objective**. It is more stable than [meanaudio_s_ac.pth](https://drive.google.com/file/d/11eQ3i5TJkU8b8S30PkHSgVozoNMWgCis/view?usp=drive_link). You can run `scripts/meanflow/infer_meanflow.sh` to generate sound with it. 
-
-4. Others: The [BigVGAN Vocoder](https://github.com/NVIDIA/BigVGAN): [best_netG.pt](https://drive.google.com/file/d/1PAJ7Asx_3e9HiaUoGIfSXI3K7BqgBR9x/view?usp=sharing). 
- The 1D VAE: [v1-16.pth](https://drive.google.com/file/d/1bJlNhGGjmDBKjz04bpOi-UjfuJILSiGU/view?usp=sharing). And the [CLAP](https://github.com/LAION-AI/CLAP) encoder:  
-[music_speech_audioset_epoch_15_esc_89.98.pt](https://drive.google.com/file/d/1KGQ5Q8xHOoItPDdJAB8ry6kKJ5HkMyo9/view?usp=share_link):  -->
-
 ## Training
-Before training, make sure that all files from [here](https://huggingface.co/AndreasXi/MeanAudio) are placed in `MeanAudio/weights`. 
+Before training, make sure that all files from [here](https://huggingface.co/AndreasXi/MeanAudio) are placed in the `ICME26-ATTM-GC-MeanAudio/weights/` directory. 
 
-### 1. Latent & Text Feature Extraction: 
-We first extract VAE latents & text encoder embeddings to enable fast and efficient training. For this, `scripts/extract_audio_latents.sh` provides a detailed guide for it. The pipeline includes two steps: a) partition audios into 10s clips. b) extract latents & embeddings into npz files. 
+### 1. Jamendo Dataset Preparation:
 
-To avoid the laborious data pre-processing step, we have uploaded an extracted version of [AudioCaps](https://audiocaps.github.io). Feel free to download it from this [link](https://drive.google.com/file/d/1C_P3ZQQWxUgMuCw-qvYj2C2r0iM35Sfy/view?usp=share_link), unzip it and put it under `MeanAudio/data/`. Then you can directly jump to the second step. 😊
+To train the FluxAudio model with the provided Jamendo dataset, you need to complete the following steps:
 
-However, if you want to train the model on other datasets besides AudioCaps, you should still run `scripts/extract_audio_latents.sh` to do feature extraction. 
-Remember to adjust `config/data/t5_clap.yaml` for correct metadata paths. 
-### 2. Install Validation Packages: 
-We rely on [av-benchmark](https://github.com/hkchengrex/av-benchmark) for validation & evaluation. Please install it first before training.
+#### Prerequisites:
+- Download the `raw_30s` subset from [the MTG-Jamendo dataset](https://github.com/MTG/mtg-jamendo-dataset)
+- Preprocess the Jamendo dataset using the [ICME26-ATTM-GC-Preprocessing](https://github.com/ntu-musicailab/ICME26-ATTM-GC-Preprocessing) official preprocessing pipeline
+  - The preprocessed audio should be organized as: `{audio_root}/{sub_folder}/{sample_id}_instrumental.mp3`
+  - Example: `mtg_jamendo_separated/00/1085700_instrumental.mp3`
 
-### 3. Train with MeanFlow objective: 
-Use the script below to train a MeanAudio model. By default, this will initialize the flow transformer from the pretrained ckpt `fluxaudio_fm.pth` and do MeanFlow fine-tuning. 
+#### Prepare MeanAudio-Ready Dataset:
+
+Run the preparation script to organize the dataset into train/val/test splits and desired structure:
+
 ```bash
-bash scripts/meanflow/train_meanflow.sh
+python training/prepare_jamendo_for_meanaudio.py \
+    --audio_root /path/to/mtg_jamendo_separated \
+    --val_samples 100 \
+    --test_samples 100 \
 ```
 
-### 4. (Optional) Pre-training with Standard Flow Matching: 
-Use the script below to train a Flux-style transformer using the conditional flow matching objective: 
+**Arguments:**
+- `--audio_root`: Path to preprocessed Jamendo audio files (with instrumental stems)
+- `--val_samples`: Number of samples for validation (default: 100, adjust as desired)
+- `--test_samples`: Number of samples for testing (default: 100, adjust as desired)
+
+The script will create train/val/test/all splits in `./data/jamendo_meanaudio_ready/`, with audio symlinks and TSV files containing sample IDs and captions for each split.
+
+### 2. Latent & Text Feature Extraction: 
+Extract VAE latents and text encoder embeddings to enable efficient training. The extraction pipeline consists of two steps: (a) partitioning audio files into 10-second clips, and (b) extracting latents and embeddings into NPZ files.
+
+Before running, edit `scripts/extract_audio_latents.sh` to configure the paths for each split (train/val/test).
+
+Then run the extraction script for each split:
+```bash
+bash scripts/extract_audio_latents.sh
+```
+
+**Note:** This extraction process must be completed separately for train, validation, and test splits by updating the paths in the script accordingly.
+
+### 3. Install Validation Packages: 
+Install [av-benchmark](https://github.com/hkchengrex/av-benchmark) for validation and evaluation metrics. After installation, create a symlink to the `av_bench` module in this repository's root directory:
+
+```bash
+ln -s /path/to/av-benchmark/av_bench ./av_bench
+```
+
+Verify the symlink is created correctly: `ICME26-ATTM-GC-MeanAudio/av_bench` should point to `av-benchmark/av_bench`.
+
+### 4. Train FluxAudio: 
+Train a Flux-style transformer model using the conditional flow matching objective. Choose between two model variants based on your computational resources and performance requirements:
+
+#### Model Variants
+
+| Model Name  | Size | Training Script                             |
+| ----------- | ---- | ------------------------------------------- |
+| FluxAudio-S | 120M | `scripts/flowmatching/train_fluxaudio_s.sh` |
+| FluxAudio-L | 480M | `scripts/flowmatching/train_fluxaudio_l.sh` |
+
+**Train FluxAudio-S (smaller, faster):**
 ```bash 
-bash scripts/flowmatching/train_flowmatching.sh
+bash scripts/flowmatching/train_fluxaudio_s.sh
 ```
-The obtained model can serve as a strong initialization for the mixed-flow fine-tuning. 
 
-## Evaluation
-
-Use the script below to do evaluation, before this, please first install [av-benchmark](https://github.com/hkchengrex/av-benchmark) for metrics calculation. You can specify `num_steps` and `ckpt_path` to evaluate different models with different sampling steps. 
+**Train FluxAudio-L (larger, higher quality):**
 ```bash
-bash scripts/meanflow/eval_meanflow.sh 
+bash scripts/flowmatching/train_fluxaudio_l.sh
 ```
 
 ## Citation
@@ -132,6 +113,8 @@ bash scripts/meanflow/eval_meanflow.sh
 
 
 ## Acknowledgement
+
+This repository is built upon [xiquan-li/MeanAudio](https://github.com/xiquan-li/MeanAudio.git).
 
 Many thanks to:
 - [MMAudio](https://github.com/hkchengrex/MMAudio) for the MMDiT code and training & inference structure
