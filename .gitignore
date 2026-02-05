@@ -18,6 +18,7 @@ docs/
 
 data/*
 !data/.gitkeep
+!data/captions/
 
 weights/*
 !weights/.gitkeep
